@@ -1,13 +1,8 @@
 import { createPlan, assertAcyclic, DirectedGraph, extractPart } from "https://raw.githubusercontent.com/maemon4095/ts_components/main/graph/mod.ts";
 import { Plan } from "https://raw.githubusercontent.com/maemon4095/ts_components/main/graph/mod.ts";
 
-// awaitable value interface
-// https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Promise#thenable
-type Thenable<T> = {
-    then(onFulfilled: (value: T) => unknown, onRejected: (reason?: unknown) => unknown): void;
-};
 
-export type Commands = { [name: string]: Thenable<unknown>; };
+export type Commands = { [name: string]: () => PromiseLike<unknown> | unknown; };
 export type Dependencies<C extends Commands> = { [name in keyof C]?: readonly (keyof C)[] };
 
 export function createDependencyGraph<C extends Commands, D extends Dependencies<C>>(commands: C, dependencies: D) {
@@ -47,7 +42,7 @@ export async function executePlan<C extends Commands>(plan: Plan<keyof C>, comma
         }
     });
 
-    function eventify(cmd: Thenable<unknown>, callback: () => void) {
-        (async () => await cmd)().then(callback);
+    function eventify(cmd: () => PromiseLike<unknown> | unknown, callback: () => void) {
+        (async () => await cmd())().then(callback);
     }
 }

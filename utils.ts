@@ -23,3 +23,4 @@ export class UnknownCommandError extends Error {
         return this.#command;
     }
 }
+
