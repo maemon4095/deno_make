@@ -1,5 +1,5 @@
 import $ from "https://deno.land/x/dax@0.39.1/mod.ts";
-import { Commands, Dependencies, utils } from "../mod.ts";
+import { utils } from "../mod.ts";
 
 const cmds = {
     a: $`echo "a"`,
@@ -10,7 +10,7 @@ const cmds = {
     f: $`echo "f"`,
     g: $`echo "g"`,
     h: $`echo "h"`,
-} as const satisfies Commands;
+};
 
 const deps = {
     a: ["b", "c"],
@@ -18,6 +18,6 @@ const deps = {
     c: ["d", "e"],
     f: ["c"],
     g: ["e"]
-} as const satisfies Dependencies<typeof cmds>;
+} as const;
 
 await utils.execute(cmds, deps, Deno.args);

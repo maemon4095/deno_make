@@ -8,7 +8,7 @@ type Thenable<T> = {
 };
 
 export type Commands = { [name: string]: Thenable<unknown>; };
-export type Dependencies<C extends Commands> = { [name in keyof C]?: (keyof C)[] };
+export type Dependencies<C extends Commands> = { [name in keyof C]?: readonly (keyof C)[] };
 
 export function createDependencyGraph<C extends Commands, D extends Dependencies<C>>(commands: C, dependencies: D) {
     const dependencyGraph: { [task in keyof C]?: Set<keyof C> } = {};
