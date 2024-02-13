@@ -26,7 +26,7 @@ export function createExecutionPlan<C extends Commands, D extends Dependencies<C
 }
 
 export async function executePlan<C extends Commands>(plan: Plan<keyof C>, commands: C) {
-    await new Promise<void>(resolve => {
+    await new Promise<void>((resolve, reject) => {
         step(undefined);
 
         function step(task: (keyof C) | undefined) {
@@ -37,12 +37,12 @@ export async function executePlan<C extends Commands>(plan: Plan<keyof C>, comma
             }
 
             for (const k of value) {
-                eventify(commands[k], () => step(k));
+                eventify(commands[k], () => step(k), reject);
             }
         }
     });
 
-    function eventify(cmd: () => PromiseLike<unknown> | unknown, callback: () => void) {
-        (async () => await cmd())().then(callback);
+    function eventify(cmd: () => PromiseLike<unknown> | unknown, callback: () => void, reject: (reason: unknown) => void) {
+        (async () => await cmd())().then(callback, reject);
     }
 }
