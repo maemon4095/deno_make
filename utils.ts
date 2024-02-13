@@ -7,7 +7,8 @@ export async function execute<C extends Commands, D extends Dependencies<C>>(com
             throw new UnknownCommandError(cmd);
         }
     }
-    const plan = createExecutionPlan(commands, dependencies, targets as (keyof C)[]);
+    const ts = targets.length === 0 ? undefined : targets as (keyof C)[];
+    const plan = createExecutionPlan(commands, dependencies, ts);
     await executePlan(plan, commands);
 }
 
